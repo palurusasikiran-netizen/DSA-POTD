@@ -1,0 +1,46 @@
+/* Structure of Binary Tree Node
+class Node {
+public:
+    int data;
+    Node *left;
+    Node *right;
+
+    Node(int val) {
+        data = val;
+        left = right = nullptr;
+    }
+};*/
+
+class Solution {
+public:
+    unordered_map<int, int> mp;
+    int preIndex = 0;
+
+    Node* build(vector<int>& pre, vector<int>& preMirror, int l, int r) {
+        if (preIndex >= pre.size() || l > r)
+            return nullptr;
+
+        Node* root = new Node(pre[preIndex++]);
+
+        if (l == r || preIndex >= pre.size())
+            return root;
+
+        int idx = mp[pre[preIndex]];
+
+        root->left = build(pre, preMirror, idx, r);
+        root->right = build(pre, preMirror, l + 1, idx - 1);
+
+        return root;
+    }
+
+    Node *constructBinaryTree(vector<int> &pre, vector<int> &preMirror) {
+        int n = preMirror.size();
+
+        for (int i = 0; i < n; i++)
+            mp[preMirror[i]] = i;
+
+        preIndex = 0;
+
+        return build(pre, preMirror, 0, n - 1);
+    }
+};
